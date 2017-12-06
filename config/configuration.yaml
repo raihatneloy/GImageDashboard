@@ -1,0 +1,8 @@
+db_config:
+  host: 0.0.0.0
+  port: 3306
+  database: GImageDashboard
+  username: root
+google_client_id: 328328128710-g1rh1nbrt7npt7oabsu5mov177qte5cm.apps.googleusercontent.com
+google_client_secret: r5rdpivvEN4ZbLXHgrmktBfz
+secret_key: 7d441f27d441f27567d441f2b6176a
