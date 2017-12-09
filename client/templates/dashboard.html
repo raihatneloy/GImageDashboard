@@ -1,0 +1,23 @@
+{% extends "layouts.html" %}
+
+{% block body %}
+
+
+<div class="continer">
+    <div class="form-div">
+        <h2> {{ session['name'] }}'s Dashboard </h2>
+        <br/>
+        <br/>
+    	{% if fav_images %}
+            {% for image in fav_images %}
+	            <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
+				    <label>
+				      <img id="search-img" name="{{ loop.index }}" class="img-thumbnail center-cropped" src="{{ image['thumbnail'] }}" />
+				    </label>
+				</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

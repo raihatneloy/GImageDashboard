@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}"/>
+    <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+    <title>GImage Dashboard</title>
+    {{ JSGlue.include() }}
+  </head>
+
+  <nav class="navbar navbar-default navbar-expand-xl navbar-light bg-light navbar-size">
+    <div class="container-fluid">
+      <ul class="nav navbar-nav navbar-left">
+        {% if not session['user'] %}
+        <li><h4 class="main-title">GImage Dashboard</h4></li>
+        {% else %}
+        <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('search') }}">Search Images</a></li>
+        {% endif %}
+      </ul>
+      {% if session.get('user') %}
+      <ul class="nav navbar-nav navbar-right">
+        <li><h4 class="main-title"> Hello! {{ session['name'] }} </h4></li>
+        <li>
+          <p data-letters="{{ session['avatar'] }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"></p>
+          <!--<img src="{{ session['user']['picture'] }}" width="50px" height="50px" style="border-radius: 50%" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"/>-->
+          <ul class="dropdown-menu">
+            <li><a href="{{ url_for('logout', _external=True) }}">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </nav>
+
+  <sidebar>
+    <aside class="sidebar-left">
+        <a href="{{ url_for('index', _external=True) }}" class="nc-logo-sidebar"><img src="{{ url_for('static', filename='GI Icon.png') }}" padding-left=10px width=40px height=27px>
+       </a>
+    </aside>
+  </sidebar>
+  <body>
+      {% block body %}
+      {% endblock %}
+  </body>
+</html>
+<nav class="navbar">
