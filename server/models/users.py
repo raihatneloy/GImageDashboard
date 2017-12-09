@@ -24,7 +24,7 @@ def users_model(db):
 			self.email = email
 			self.password = password
 
-	return Users		
+	return Users, favorite_images
 
 
 def add_new_user(db, Users, data):
