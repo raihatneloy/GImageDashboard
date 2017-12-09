@@ -1,0 +1,14 @@
+flask==0.12.2
+Flask-SQLAlchemy==2.3.2
+Flask-Migrate==2.1.1
+Flask-Script==2.0.6
+Flask-JSGlue==0.3.1
+bs4==0.0.1
+mechanize==0.3.6
+requests==2.18.4
+pyyaml==3.12
+pymysql==0.7.11
+mysql-python==1.2.5
+requests-oauthlib==0.8.0
+wtforms==2.1
+selenium==3.8.0
