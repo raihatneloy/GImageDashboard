@@ -7,6 +7,7 @@ from models.users import users_model as users
 from models.users import add_new_user as new_user
 from models.images import images_model as images
 from models.images import get_image
+import base64
 import json
 import yaml
 import os
@@ -44,19 +45,19 @@ manager.add_command('db', MigrateCommand)
 
 @app.route('/images/<query>', methods=['GET'])
 def get_images(query):
-	query = query.replace('%20', ' ')
-	image_links = gsearch.get_images(query)
+    query = query.replace('%20', ' ')
+    image_links = gsearch.get_images(query)
 
-	return jsonify(image_links)
+    return jsonify(image_links)
 
 
 @app.route('/register/new_user', methods=['POST'])
 def register_new_user():
-	data = json.loads(request.data)
+    data = json.loads(request.data)
+    data['password'] = base64.b64encode(data['password'])
+    ret = new_user(db, Users, data)
 
-	ret = new_user(db, Users, data)
-
-	return jsonify(ret)
+    return jsonify(ret)
 
 
 @app.route('/authentication', methods=['POST'])
@@ -64,7 +65,7 @@ def authenticate_user():
     data = json.loads(request.data)
 
     identity = data.get('identity')
-    password = data.get('password')
+    password = base64.b64encode(data.get('password'))
 
     user = Users.query.filter((Users.username == identity) | (Users.email == identity)).first()
 
