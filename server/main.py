@@ -12,8 +12,11 @@ import yaml
 import os
 
 
+# Directories
+server_dir = os.path.dirname(os.path.abspath(__file__))
+
 # Load config file
-configs = yaml.load(open('config/configuration.yaml').read())
+configs = yaml.load(open('%s/config/configuration.yaml' % server_dir).read())
 
 # Load database configs
 db_host = configs.get('db_config').get('host') or 'localhost'
@@ -32,7 +35,7 @@ app.config.update(
 
 # Initialize db
 db = SQLAlchemy(app)
-Users = users(db)
+Users, favorite_images = users(db)
 Images = images(db)
 migrate = Migrate(app, db)
 manager = Manager(app)
@@ -71,7 +74,12 @@ def authenticate_user():
     if user.password != password:
         return jsonify({"Error": "Password mismatch"})
 
-    return jsonify({"Success": "Login successful"})
+    return jsonify({
+        "Success": "Login successful",
+        "username": user.username,
+        "name": user.name,
+        "email": user.email
+    })
 
 
 @app.route('/favorite', methods=['POST'])
@@ -92,6 +100,21 @@ def add_to_favorite():
 
     return jsonify({"Success": True})
 
+
+@app.route('/get_favorites/<username>', methods=['GET'])
+def get_favorites(username):
+    images = Images.query.join(favorite_images).join(Users).filter(Users.username == username).all()
+    
+    images_dict = []
+
+    for image in images:
+        body = {}
+        body['link'] = image.image_link
+        body['thumbnail'] = image.thumbnail_link
+
+        images_dict.append(body)
+
+    return jsonify(images_dict);
 
 if __name__ == "__main__":
 	manager.run()
