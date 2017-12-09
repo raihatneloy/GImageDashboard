@@ -4,8 +4,8 @@ def images_model(db):
     class Images(db.Model):
         __tablename__ = 'images'
         id = db.Column('id', db.Integer, primary_key=True)
-        image_link = db.Column('link', db.String(100))
-        thumbnail_link = db.Column('thumbnail', db.String(100))
+        image_link = db.Column('link', db.String(1000))
+        thumbnail_link = db.Column('thumbnail', db.String(1000))
 
         def __init__(self, image_link, thumbnail_link):
             self.image_link = image_link
@@ -15,6 +15,7 @@ def images_model(db):
 
 
 def add_new_image(db, Images, data):
+
     image_link = data.get('link')
     thumbnail_link = data.get('thumbnail')
 
