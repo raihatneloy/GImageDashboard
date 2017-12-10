@@ -6,6 +6,8 @@ from modules import get_images_url as gsearch
 from modules.facebook import facebook
 from models.users import users_model as users
 from models.users import add_new_user as new_user
+from models.fbpages import pages_model as pages
+from models.fbpages import get_page
 from models.images import images_model as images
 from models.images import get_image
 import base64
@@ -37,8 +39,9 @@ app.config.update(
 
 # Initialize db
 db = SQLAlchemy(app)
-Users, favorite_images = users(db)
+Users, favorite_images, pinned_pages = users(db)
 Images = images(db)
+Pages = pages(db)
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
@@ -108,6 +111,25 @@ def add_to_favorite():
     for image in images:
         image_object = get_image(db, Images, image)
         user.favorites.append(image_object)
+
+    db.session.commit()
+
+    return jsonify({"Success": True})
+
+
+@app.route('/pinpage', methods=['POST'])
+def add_to_pin():
+    data = json.loads(request.data)
+
+    pages = data['pages']
+    username = data['username']
+    email = data['email']
+
+    user = Users.query.filter((Users.username == username) | (Users.email == email)).first()
+
+    for page in pages:
+        page_object = get_page(db, Pages, page)
+        user.pages.append(page_object)
 
     db.session.commit()
 
