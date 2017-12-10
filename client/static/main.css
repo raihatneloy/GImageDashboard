@@ -47,6 +47,10 @@
     color:white;
 }
 
+.container {
+    padding-left: 10%;
+}
+
 .avatar-circle {
   width: 100px;
   height: 100px;

@@ -192,7 +192,11 @@ def dashboard():
         '%s/get_favorites/%s' % (server_endpoint, username)
     )
 
-    return render_template('dashboard.html', fav_images=response.json())
+    response2 = requests.get(
+        '%s/get_pinpages/%s' % (server_endpoint, username)
+    )
+
+    return render_template('dashboard.html', fav_images=response.json(), pin_pages=response2.json())
 
 
 @app.route('/')

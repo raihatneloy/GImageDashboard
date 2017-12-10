@@ -3,21 +3,55 @@
 {% block body %}
 
 
-<div class="continer">
-    <div class="form-div">
+
+    <div class="container">
         <h2> {{ session['name'] }}'s Dashboard </h2>
         <br/>
         <br/>
-    	{% if fav_images %}
-            {% for image in fav_images %}
-	            <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
-				    <label>
-				      <img id="search-img" name="{{ loop.index }}" class="img-thumbnail center-cropped" src="{{ image['thumbnail'] }}" />
-				    </label>
-				</div>
-            {% endfor %}
-        {% endif %}
+        <div class="row">
+            <div class="panel with-nav-tabs panel-default">
+                <div class="panel-heading">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#GoogleDashboard" data-toggle="tab">Google Selected Images</a>
+                        </li>
+                        <li>
+                            <a href="#PageDashboard" data-toggle="tab">Facebook Pinned Pages</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="GoogleDashboard">
+                        	{% if fav_images %}
+                                {% for image in fav_images %}
+                    	            <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
+                    				    <label>
+                    				      <img id="search-img" name="{{ loop.index }}" class="img-thumbnail center-cropped" src="{{ image['thumbnail'] }}" />
+                    				    </label>
+                    				</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane fade" id="PageDashboard">
+                            {% if pin_pages %}
+                                {% for page in pin_pages %}
+                                    <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
+                                        <label>
+                                          <img id="search-img" name="{{ page['id'] }}" class="img-thumbnail facebook-cover" src="{{ page['cover'] }}" />
+                                          <img id="search-img" name="{{ page['id'] }}" class="img-thumbnail facebook-profile" src="{{ page['picture'] }}" />
+                                        </label>
+                                        <div style="white-space: nowrap;">
+                                        <a target="_blank" href="https://www.facebook.com/{{ page['id'] }}" class="text-success">{{ page['name'] }}</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
 {% endblock %}
