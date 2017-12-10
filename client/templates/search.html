@@ -3,36 +3,95 @@
 {% block body %}
 
 
-<div class="container">
+<div class="form-div">
     <img src="{{ url_for('static', filename='Dashboard text.png') }}" align="middle" style="padding-left: 30%; padding-right: 30%; z-index: 1; max-width: 100%;"/><br/>
-    <div class="input-group">
-        <div id="logo" name="logo" class="input-group-addon" style="line-height:2; z-index: 100;"><i class="glyphicon glyphicon-search"></i></div>
-        <input id="search" name="search" type="text" class="form-control input-text" style="z-index: 100" placeholder="Search keywords">
-        <br/>
-    </div>
-    <br/>
-    <div>
-    	<input type="button" class="btn btn-primary" id="add_favorite" value="Add selected Images to Dashboard">
-    </div>
-    <br/><br/>
-    <div>
-    	{% if images %}
-            {% set index = 0 %}
-            {% for image in images %}
-                {% set index = index + 1 %}
-	            <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
-				    <label class="image-checkbox">
-				      <img id="search-img" name="{{ loop.index }}" class="img-thumbnail center-cropped" src="{{ image['thumbnail'] }}" />
-				      <input type="checkbox" name="image[]" value="" />
-				      <i class="fa fa-check hidden"></i>
-				    </label>
-				</div>
-	            <!--<div class="col-xs-4 col-sm-3 col-md-2 nopad text-center">
-	            	<img src= class="img-thumbnail"/>
-
-	        	</div>-->
-            {% endfor %}
-        {% endif %}
+    <div class="row">
+        <div class="panel with-nav-tabs panel-default">
+            <div class="panel-heading">
+                    <ul class="nav nav-tabs">
+                        {% if not type or type == 'gimage' %}
+                        <li class="active">
+                        {% else %}
+                        <li>
+                        {% endif %}
+                            <a href="#GoogleImage" data-toggle="tab">Google Image Search</a>
+                        </li>
+                        {% if type == 'facebook' %}
+                        <li class="active">
+                        {% else %}
+                        <li>
+                        {% endif %}
+                            <a href="#FaceBookSearch" data-toggle="tab">Facebook Page Search</a>
+                        </li>
+                    </ul>
+            </div>
+            <div class="panel-body">
+                <div class="tab-content">
+                    {% if not type or type == 'gimage' %}
+                    <div class="tab-pane fade in active" id="GoogleImage">
+                    {% else %}
+                    <div class="tab-pane fade in" id="GoogleImage">
+                    {% endif %}
+                        <div class="input-group">
+                            <div id="logo" name="logo" class="input-group-addon" style="line-height:2; z-index: 100;"><i class="glyphicon glyphicon-search"></i></div>
+                            <input id="search" name="search" type="text" class="form-control input-text" style="z-index: 100" placeholder="Search keywords">
+                            <br/>
+                        </div>
+                        <br/>
+                        <div>
+                            <input type="button" class="btn btn-primary" id="add_favorite" value="Add selected Images to Google Image Dashboard">
+                        </div>
+                        <br/><br/>
+                        <div>
+                            {% if images %}
+                                {% set index = 0 %}
+                                {% for image in images %}
+                                    {% set index = index + 1 %}
+                                    <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
+                                        <label class="image-checkbox">
+                                          <img id="search-img" name="{{ loop.index }}" class="img-thumbnail center-cropped" src="{{ image['thumbnail'] }}" />
+                                          <input type="checkbox" name="image[]" value="" />
+                                          <i class="fa fa-check hidden"></i>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if type == 'facebook' %}
+                    <div class="tab-pane fade in active" id="FaceBookSearch">
+                    {% else %}
+                    <div class="tab-pane fade" id="FaceBookSearch">
+                    {% endif %}
+                        <div class="input-group">
+                            <div id="logo" name="logo" class="input-group-addon" style="line-height:2; z-index: 100;"><i class="glyphicon glyphicon-search"></i></div>
+                            <input id="facebooksearch" name="search" type="text" class="form-control input-text" style="z-index: 100" placeholder="Search keywords">
+                            <br/>
+                        </div>
+                        <br/>
+                        <div>
+                            <input type="button" class="btn btn-primary" id="add_facebookpage" value="Pin selected Pages to Dashboard">
+                        </div>
+                        <br/><br/>
+                        <div>
+                            {% if images %}
+                                {% set index = 0 %}
+                                {% for image in images %}
+                                    {% set index = index + 1 %}
+                                    <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
+                                        <label class="image-checkbox">
+                                          <img id="search-img" name="{{ loop.index }}" class="img-thumbnail center-cropped" src="{{ image['thumbnail'] }}" />
+                                          <input type="checkbox" name="image[]" value="" />
+                                          <i class="fa fa-check hidden"></i>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
