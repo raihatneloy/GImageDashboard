@@ -86,6 +86,15 @@ $(function() {
 
 		window.location = Flask.url_for('search', {"keyword": keyword});
 	}
+	var search_page = function(){
+		var keyword = $('#facebooksearch').val();
+
+		if (keyword === ''){
+			return;
+		}
+
+		window.location = Flask.url_for('search_fb', {"keyword": keyword});
+	}
 	$('#login-submit').click(function(e){
 		login_submit(e);
 	});
@@ -105,6 +114,11 @@ $(function() {
 	$('#search').keypress(function(e){
 		if (e.keyCode == 13){
 			search_image();
+		}
+	});
+	$('#facebooksearch').keypress(function(e){
+		if (e.keyCode == 13){
+			search_page();
 		}
 	});
 	$(".image-checkbox").each(function () {
