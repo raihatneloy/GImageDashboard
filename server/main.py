@@ -151,5 +151,25 @@ def get_favorites(username):
 
     return jsonify(images_dict);
 
+
+@app.route('/get_pinpages/<username>', methods=['GET'])
+def get_pinpages(username):
+    pages = Pages.query.join(pinned_pages).join(Users).filter(Users.username == username).all()
+
+    pages_dict = []
+
+    for page in pages:
+        body = {}
+
+        body['name'] = page.name
+        body['id'] = page.page_id
+        body['cover'] = page.cover
+        body['picture'] = page.picture
+
+        pages_dict.append(body)
+
+    return jsonify(pages_dict)
+
+
 if __name__ == "__main__":
     manager.run()
