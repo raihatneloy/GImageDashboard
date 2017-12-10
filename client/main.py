@@ -84,7 +84,9 @@ def logout():
 
 
 @app.route('/search', defaults={'keyword': None})
+@app.route('/search/gimage', defaults={'keyword': None})
 @app.route('/search/<keyword>')
+@app.route('/search/gimage/<keyword>')
 def search(keyword):
     search_result = None
 
@@ -99,7 +101,13 @@ def search(keyword):
     session['searched_images'] = search_result
     print session['searched_images']
 
-    return render_template('search.html', images=search_result)
+    return render_template('search.html', images=search_result, type='gimage')
+
+
+@app.route('/search/fbpost', defaults={'keyword': None})
+@app.route('/search/fbpost/<keyword>')
+def search_fb(keyword):
+    return render_template('search.html', images=None, type='facebook')
 
 
 @app.route('/add_favorite', methods=['POST'])
