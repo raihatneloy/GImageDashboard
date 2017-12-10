@@ -124,6 +124,7 @@ def search_fb(keyword):
 def add_favorite():
     x = request.form.to_dict(flat=False)
     selected_images = None
+    print x
     for key, value in x.iteritems():
         selected_images = key
     
@@ -132,10 +133,10 @@ def add_favorite():
     global searched_images
     
     for index in selected_images['images']:
-        print searched_images[int(index)-1]
+        #print searched_images[int(index)-1]
         image_objects.append(searched_images[int(index)-1])
 
-    print image_objects
+    #print image_objects
 
     response = requests.post(
         '%s/favorite' % server_endpoint,
@@ -145,7 +146,40 @@ def add_favorite():
             'email': session['email']
         }
     )
-    print response.json()
+    #print response.json()
+
+    return jsonify({"Success": True})
+
+
+@app.route('/add_page', methods=['POST'])
+def add_page():
+    x = request.form.to_dict(flat=False)
+    print x
+    selected_pages = None
+
+    for key, value in x.iteritems():
+        selected_pages = key
+
+    selected_pages = json.loads(selected_pages)
+    page_objects = []
+    global searched_images
+    #print searched_images
+
+    for id in selected_pages['pages']:
+        #print id
+        for page in searched_images:
+            if id == page['id']:
+                page_objects.append(page)
+                break
+
+    response = requests.post(
+        '%s/pinpage' % server_endpoint,
+        json={
+            'pages': page_objects,
+            'username': session['user'],
+            'email': session['email']
+        }
+    )
 
     return jsonify({"Success": True})
 

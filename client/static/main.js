@@ -182,5 +182,26 @@ $(function() {
 				console.log(response);
 			}
 		});
-	})
+	});
+	$("#add_facebookpage").click(function(e){
+		if (selected_images.length === 0){
+			create_alert({
+				'Error': 'Please select age to pin to your dashboard!'
+			});
+			return ;
+		}
+		console.log(JSON.stringify(selected_images));
+
+		$.ajax({
+			url: Flask.url_for('add_page'),
+			data: JSON.stringify({"pages": selected_images}),
+			type: 'POST',
+			success: function(response){
+				window.location = Flask.url_for('dashboard');
+			},
+			error: function(response){
+				console.log(response);
+			}
+		});
+	});
 });
