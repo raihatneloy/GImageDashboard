@@ -7,6 +7,12 @@ def users_model(db):
 			db.Column('image_id', db.Integer, db.ForeignKey('images.id'))
 		)
 
+	pinned_pages = db.Table(
+			'pinned_pages',
+			db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+			db.Column('page_id', db.Integer, db.ForeignKey('pages.id'))
+		)
+
 	class Users(db.Model):
 		__tablename__ = 'users'
 		id = db.Column('id', db.Integer, primary_key=True)
@@ -17,6 +23,9 @@ def users_model(db):
 		favorites = db.relationship("Images",
 						secondary=favorite_images
 					)
+		pages = db.relationship("Pages",
+						secondary=pinned_pages
+					)
 
 		def __init__(self, username, name, email, password):
 			self.username = username
@@ -24,7 +33,7 @@ def users_model(db):
 			self.email = email
 			self.password = password
 
-	return Users, favorite_images
+	return Users, favorite_images, pinned_pages
 
 
 def add_new_user(db, Users, data):
