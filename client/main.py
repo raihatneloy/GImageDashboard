@@ -107,7 +107,17 @@ def search(keyword):
 @app.route('/search/fbpost', defaults={'keyword': None})
 @app.route('/search/fbpost/<keyword>')
 def search_fb(keyword):
-    return render_template('search.html', images=None, type='facebook')
+    search_result = None
+
+    if keyword:
+        search_result = requests.get('%s/pages/%s' % (server_endpoint, keyword)).json()
+
+    global searched_images
+    searched_images = search_result
+
+    print searched_images
+
+    return render_template('search.html', images=search_result, type='facebook')
 
 
 @app.route('/add_favorite', methods=['POST'])
