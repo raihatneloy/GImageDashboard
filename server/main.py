@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from modules import get_images_url as gsearch
+from modules.facebook import facebook
 from models.users import users_model as users
 from models.users import add_new_user as new_user
 from models.images import images_model as images
@@ -29,9 +30,9 @@ db_name = configs.get('db_config').get('database') or 'GImageDashboard'
 # Initialize app
 app = Flask(__name__)
 app.config.update(
-	DEBUG=True,
-	SQLALCHEMY_DATABASE_URI='mysql://%s:%s@%s:%s/%s' % (db_username, db_password, db_host, db_port, db_name),
-	OAUTH1_PROVIDER_ENFORCE_SSL=False
+    DEBUG=True,
+    SQLALCHEMY_DATABASE_URI='mysql://%s:%s@%s:%s/%s' % (db_username, db_password, db_host, db_port, db_name),
+    OAUTH1_PROVIDER_ENFORCE_SSL=False
 )
 
 # Initialize db
@@ -42,6 +43,9 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
+# Initialize facebook class
+fb = facebook(configs['facebook_client_id'], configs['facebook_client_secret'])
+
 
 @app.route('/images/<query>', methods=['GET'])
 def get_images(query):
@@ -49,6 +53,14 @@ def get_images(query):
     image_links = gsearch.get_images(query)
 
     return jsonify(image_links)
+
+
+@app.route('/pages/<query>', methods=['GET'])
+def get_pages(query):
+    query = query.replace('%20', ' ')
+    pages = fb.get_pages(query)
+
+    return jsonify(pages)
 
 
 @app.route('/register/new_user', methods=['POST'])
@@ -118,4 +130,4 @@ def get_favorites(username):
     return jsonify(images_dict);
 
 if __name__ == "__main__":
-	manager.run()
+    manager.run()
