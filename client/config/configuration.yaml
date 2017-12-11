@@ -1,1 +1,3 @@
 server_endpoint: http://localhost:5000
+facebook_client_id: 300335867122582
+facebook_client_secret: 48f25f9a9becd69aaefbe43369b6db05
