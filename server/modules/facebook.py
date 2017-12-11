@@ -3,9 +3,8 @@ import requests
 class facebook:
     access_token = None
 
-    def __init__(self, client_id, client_secret):
-        self.access_token = requests.get('https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=client_credentials' % (client_id, client_secret)).json()['access_token']
-        print self.access_token
+    def __init__(self, access_token):
+        self.access_token = access_token
 
     def get_pages(self, keyword):
         api_url = 'https://graph.facebook.com/search?q=%s&type=page&limit=100&fields=name,cover,picture&access_token=%s' % (keyword, self.access_token)

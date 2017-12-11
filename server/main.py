@@ -8,10 +8,12 @@ from models.users import users_model as users
 from models.users import add_new_user as new_user
 from models.fbpages import pages_model as pages
 from models.fbpages import get_page
+from models.fbusers import fbuser_model as fb_user
 from models.images import images_model as images
 from models.images import get_image
 import base64
 import json
+import requests
 import yaml
 import os
 
@@ -43,12 +45,13 @@ db = SQLAlchemy(app)
 Users, favorite_images, pinned_pages = users(db)
 Images = images(db)
 Pages = pages(db)
+FBUsers = fb_user(db)
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 # Initialize facebook class
-fb = facebook(configs['facebook_client_id'], configs['facebook_client_secret'])
+fb = None
 
 
 @app.route('/images/<query>', methods=['GET'])
@@ -91,12 +94,56 @@ def authenticate_user():
     if user.password != password:
         return jsonify({"Error": "Password mismatch"})
 
-    return jsonify({
+    fb_info = FBUsers.query.join(Users).filter(Users.id == user.id).first()
+
+    auth_response = {
         "Success": "Login successful",
         "username": user.username,
         "name": user.name,
         "email": user.email
+    }
+
+    if fb_info:
+        auth_response['facebook_name'] = fb_info.name
+        auth_response['facebook_id'] = fb_info.fbid
+
+    return jsonify(auth_response)
+
+
+@app.route('/add_fbuser', methods=['POST'])
+def add_fbuser():
+    global fb
+
+    data = json.loads(request.data)
+
+    access_token = data['access_token']
+    fb = facebook(access_token)
+    user_fb_info = requests.get('https://graph.facebook.com/me?access_token=%s' % access_token)
+
+    username = data['username']
+
+    user_object = Users.query.filter(Users.username == username).first()
+    fbuser_object = FBUsers(user_fb_info.json()['name'], user_fb_info.json()['id'], access_token)
+    user_object.fbuser.append(fbuser_object)
+
+    db.session.commit()
+
+    return jsonify({
+        'facebook_name' : user_fb_info.json()['name'],
+        'facebook_id': user_fb_info.json()['id']
     })
+
+
+@app.route('/remove_fbuser', methods=['POST'])
+def remove_fbuser():
+    data = json.loads(request.data)
+
+    fb_info = FBUsers.query.filter(FBUsers.fbid == data['facebook_id']).first()
+
+    db.session.delete(fb_info)
+    db.session.commit()
+
+    return jsonify({"Success": "Facebook Disconnected"})
 
 
 @app.route('/favorite', methods=['POST'])

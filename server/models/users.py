@@ -26,6 +26,9 @@ def users_model(db):
 		pages = db.relationship("Pages",
 						secondary=pinned_pages
 					)
+		fbuser = db.relationship('FBUser',
+						backref='fbusers'
+					)
 
 		def __init__(self, username, name, email, password):
 			self.username = username
