@@ -27,7 +27,10 @@
                                 {% for image in fav_images %}
                     	            <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
                     				    <label>
-                    				      <img id="search-img" name="{{ loop.index }}" class="img-thumbnail center-cropped" src="{{ image['thumbnail'] }}" />
+                    				      <a class="fancybox" rel="lightbox" href="{{ image['link'] }}">
+                                          <img id="search-img" name="{{ loop.index }}" class="img-thumbnail center-cropped" src="{{ image['thumbnail'] }}" />
+                                          </a>
+                                          <a target="_black" href="{{ image['link'] }}" class="text-success">Open In New Tab</a>
                     				    </label>
                     				</div>
                                 {% endfor %}
