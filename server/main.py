@@ -34,7 +34,8 @@ app = Flask(__name__)
 app.config.update(
     DEBUG=True,
     SQLALCHEMY_DATABASE_URI='mysql://%s:%s@%s:%s/%s' % (db_username, db_password, db_host, db_port, db_name),
-    OAUTH1_PROVIDER_ENFORCE_SSL=False
+    OAUTH1_PROVIDER_ENFORCE_SSL=False,
+    SEND_FILE_MAX_AGE_DEFAULT=0
 )
 
 # Initialize db
