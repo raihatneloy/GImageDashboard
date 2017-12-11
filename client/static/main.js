@@ -90,6 +90,12 @@ $(function() {
 		var keyword = $('#facebooksearch').val();
 
 		if (keyword === ''){
+			create_alert({'Error': 'Please Specify any search keyword'})
+			return;
+		}
+
+		if ($('#fb_not_connected').length){
+			create_alert({'Error': 'Please Connect with your facebook account. Click the Connect button!'})
 			return;
 		}
 

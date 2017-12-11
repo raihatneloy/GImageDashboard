@@ -30,6 +30,9 @@ manager = Manager(app)
 # Configure JSGlue
 jsglue = JSGlue(app)
 
+# Facebook API's
+fb_oauth_uri = 'https://www.facebook.com/v2.11/dialog/oauth'
+
 
 @app.after_request
 def add_header(response):
@@ -39,9 +42,16 @@ def add_header(response):
     return response
 
 
+def check_auth():
+    if not session.get('user'):
+        return False
+
+    return True
+
+
 @app.route('/login')
 def login():
-    if session.get('user'):
+    if check_auth():
        return redirect(url_for('index', _external=True))
 
     return render_template('login.html')
@@ -64,6 +74,8 @@ def authenticate():
             session['name'] = response.json().get('name')
             session['email'] = response.json().get('email')
             session['avatar'] = response.json().get('name')[0].upper()
+            session['facebook_name'] = response.json().get('facebook_name')
+            session['facebook_id'] = response.json().get('facebook_id')
 
         return json.dumps(response.json())
     else:
@@ -87,9 +99,62 @@ def register():
 
 @app.route('/logout')
 def logout():
-    if session.get('user'):
+    if check_auth():
         del session['user']
     return redirect(url_for('login', _external=True))
+
+
+@app.route('/fb_auth')
+def fb_auth():
+    uri = '%s?client_id=%s&redirect_uri=%s&response_type=token' % (fb_oauth_uri, configs['facebook_client_id'], url_for('fb_callback', _external=True))
+
+    return redirect(uri)
+
+
+@app.route('/fb_callback')
+def fb_callback():
+    return '''  <script type="text/javascript">
+                    var token = window.location.href.split("access_token=")[1]; 
+                    window.location = "/facebook/callback?access_token=" + token;
+                </script> '''
+
+
+@app.route('/facebook/callback', methods=['GET', 'POST'])
+def facebook_callback():
+    access_token = request.args.get("access_token")
+    print access_token
+
+    if access_token == "undefined":
+        flash("You denied the request to sign in.", "error")
+        return redirect(url_for('index'))
+
+    response = requests.post(
+            "%s/add_fbuser" % server_endpoint,
+            json={
+                "access_token": access_token,
+                "username": session["user"]
+            }
+        )
+
+    session["facebook_name"] = response.json()['facebook_name']
+    session["facebook_id"] = response.json()['facebook_id']
+
+    return redirect(url_for('search_fb'))
+
+
+@app.route('/fb_auth_remove')
+def fb_auth_remove():
+    response = requests.post(
+            '%s/remove_fbuser' % server_endpoint,
+            json={
+                'facebook_id': session['facebook_id']
+            }
+        )
+
+    del session['facebook_id']
+    del session['facebook_name']
+
+    return redirect(url_for('search_fb'))
 
 
 @app.route('/search', defaults={'keyword': None})
@@ -97,6 +162,9 @@ def logout():
 @app.route('/search/<keyword>')
 @app.route('/search/gimage/<keyword>')
 def search(keyword):
+    if not check_auth():
+        return redirect(url_for('login', _external=True))
+
     search_result = None
 
     if keyword == '':
@@ -116,6 +184,9 @@ def search(keyword):
 @app.route('/search/fbpost', defaults={'keyword': None})
 @app.route('/search/fbpost/<keyword>')
 def search_fb(keyword):
+    if not check_auth():
+        return redirect(url_for('login', _external=True))
+
     search_result = None
 
     if keyword:
