@@ -30,6 +30,15 @@ manager = Manager(app)
 # Configure JSGlue
 jsglue = JSGlue(app)
 
+
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'public, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+
+    return response
+
+
 @app.route('/login')
 def login():
     if session.get('user'):
