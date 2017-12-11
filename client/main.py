@@ -3,6 +3,7 @@ from flask_script import Manager
 from flask_jsglue import JSGlue
 from tables.authentication import Login, Register
 from werkzeug.datastructures import ImmutableMultiDict
+from urlparse import urlparse
 import os
 import json
 import requests
@@ -175,8 +176,10 @@ def search(keyword):
 
     global searched_images
     searched_images = search_result
-    session['searched_images'] = search_result
-    print session['searched_images']
+
+    if searched_images:
+        for image in searched_images:
+            image['base_url'] = urlparse(image['link']).netloc
 
     return render_template('search.html', images=search_result, type='gimage')
 
@@ -270,13 +273,17 @@ def dashboard():
 
     response = requests.get(
         '%s/get_favorites/%s' % (server_endpoint, username)
-    )
+    ).json()
 
     response2 = requests.get(
         '%s/get_pinpages/%s' % (server_endpoint, username)
-    )
+    ).json()
 
-    return render_template('dashboard.html', fav_images=response.json(), pin_pages=response2.json())
+    if response:
+        for image in response:
+            image['base_url'] = urlparse(image['link']).netloc
+
+    return render_template('dashboard.html', fav_images=response, pin_pages=response2)
 
 
 @app.route('/')

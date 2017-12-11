@@ -53,7 +53,9 @@
                                           <input type="checkbox" name="image[]" value="" />
                                           <i class="fa fa-check hidden"></i>
                                         </label>
-                                        <a class="fancybox text-success" rel="lightbox" href="{{ image['link'] }}">Preview</a>
+                                        <a class="fancybox text-success" rel="lightbox" href="{{ image['link'] }}">
+                                        Preview</a><br/>
+                                        <a target="_blank" class="text-success force-single-line"> Found at: {{ image['base_url'] }}</a>
                                     </div>
                                 {% endfor %}
                             {% endif %}

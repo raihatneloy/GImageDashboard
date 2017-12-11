@@ -93,6 +93,12 @@
     height: 40%;
 }
 
+.force-single-line {
+    width: 70px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 /*.img-thumbnail img{
     // your styles for the image
     width: 100%;
