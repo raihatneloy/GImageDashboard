@@ -289,7 +289,7 @@ def get_500pxpin(username):
 
         _500px_dict.append(body)
 
-    return jsonify(pages_dict)
+    return jsonify(_500px_dict)
 
 
 if __name__ == "__main__":

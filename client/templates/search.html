@@ -23,6 +23,13 @@
                         {% endif %}
                             <a href="#FaceBookSearch" data-toggle="tab">Facebook Page Search</a>
                         </li>
+                        {% if type == '500px' %}
+                        <li class="active">
+                        {% else %}
+                        <li>
+                        {% endif %}
+                            <a href="#500pxUsers" data-toggle="tab">500px Users Search</a>
+                        </li>
                     </ul>
             </div>
             <div class="panel-body">
@@ -102,6 +109,39 @@
                                         </label>
                                         <div style="white-space: nowrap;">
                                         <a target="_blank" href="https://www.facebook.com/{{ image['id'] }}" class="text-success">{{ image['name'] }}</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if type == '500px' %}
+                    <div class="tab-pane fade in active" id="500pxUsers">
+                    {% else %}
+                    <div class="tab-pane fade in" id="500pxUsers">
+                    {% endif %}
+                        <div class="input-group">
+                            <div id="logo" name="logo" class="input-group-addon" style="line-height:2; z-index: 100;"><i class="glyphicon glyphicon-search"></i></div>
+                            <input id="500pxsearch" name="search" type="text" class="form-control input-text" style="z-index: 100" placeholder="Search keywords">
+                            <br/>
+                        </div>
+                        <br/>
+                        <div>
+                            <input type="button" class="btn btn-primary" id="add_500px" value="Pin selected users in your 500px dashboard">
+                        </div>
+                        <br/><br/>
+                        <div>
+                            {% if type == '500px' and images %}
+                                {% for image in images %}
+                                    <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
+                                        <label class="image-checkbox">
+                                          <img id="search-img" name="{{ image['_500pxid'] }}" class="img-thumbnail facebook-cover" src="{{ image['cover'] }}" />
+                                          <img id="search-img" name="{{ image['_500pxid'] }}" class="img-thumbnail facebook-profile" src="{{ image['picture'] }}" />
+                                          <input type="checkbox" name="image[]" value="" />
+                                          <i class="fa fa-check hidden"></i>
+                                        </label>
+                                        <div style="white-space: nowrap;">
+                                        <a target="_blank" href="https://www.500px.com/{{ image['username'] }}" class="text-success">{{ image['name'] }}</a>
                                         </div>
                                     </div>
                                 {% endfor %}

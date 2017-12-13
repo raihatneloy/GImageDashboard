@@ -81,11 +81,12 @@ $(function() {
 		var keyword = $('#search').val();
 
 		if (keyword === ''){
+			create_alert({'Error': 'Please Specify any search keyword'})
 			return ;
 		}
 
 		window.location = Flask.url_for('search', {"keyword": keyword});
-	}
+	};
 	var search_page = function(){
 		var keyword = $('#facebooksearch').val();
 		var fb_info = {};
@@ -114,7 +115,17 @@ $(function() {
 				console.log('response');
 			}
 		});
-	}
+	};
+	var search_500px = function(){
+		var keyword = $('#500pxsearch').val();
+		
+		if (keyword === ''){
+			create_alert({'Error': 'Please Specify any search keyword'})
+			return;
+		}
+
+		window.location = Flask.url_for('search_500px', {"keyword": keyword});
+	};
 	$('#login-submit').click(function(e){
 		login_submit(e);
 	});
@@ -141,6 +152,11 @@ $(function() {
 			search_page();
 		}
 	});
+	$('#500pxsearch').keypress(function(e){
+		if (e.keyCode == 13){
+			search_500px();
+		}
+	})
 	$(".image-checkbox").each(function () {
 	  if ($(this).find('input[type="checkbox"]').first().attr("checked")) {
 	    $(this).addClass('image-checkbox-checked');
@@ -215,6 +231,27 @@ $(function() {
 		$.ajax({
 			url: Flask.url_for('add_page'),
 			data: JSON.stringify({"pages": selected_images}),
+			type: 'POST',
+			success: function(response){
+				window.location = Flask.url_for('dashboard');
+			},
+			error: function(response){
+				console.log(response);
+			}
+		});
+	});
+	$("#add_500px").click(function(e){
+		if (selected_images.length === 0){
+			create_alert({
+				'Error': 'Please select age to pin to your dashboard!'
+			});
+			return ;
+		}
+		console.log(JSON.stringify(selected_images));
+
+		$.ajax({
+			url: Flask.url_for('add_500px'),
+			data: JSON.stringify({"users": selected_images}),
 			type: 'POST',
 			success: function(response){
 				window.location = Flask.url_for('dashboard');

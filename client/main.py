@@ -228,6 +228,23 @@ def search_fb(keyword):
     return render_template('search.html', images=search_result, type='facebook')
 
 
+@app.route('/search/_500px', defaults={'keyword': None})
+@app.route('/search/_500px/<keyword>')
+def search_500px(keyword):
+    if not check_auth():
+        return redirect(url_for('login', _external=True))
+
+    search_result = None
+
+    if keyword:
+        search_result = requests.get('%s/_500px/%s' % (server_endpoint, keyword)).json()
+    
+    global searched_images
+    searched_images = search_result
+
+    return render_template('search.html', images=search_result, type='500px')
+
+
 @app.route('/add_favorite', methods=['POST'])
 def add_favorite():
     x = request.form.to_dict(flat=False)
@@ -292,6 +309,36 @@ def add_page():
     return jsonify({"Success": True})
 
 
+@app.route('/add_500px', methods=['POST'])
+def add_500px():
+    x = request.form.to_dict(flat=False)
+
+    selected_500px = None
+
+    for key, value in x.iteritems():
+        selected_500px = key
+    
+    selected_500px = json.loads(selected_500px)
+    _500px_objects = []
+    global searched_images
+
+    for id in selected_500px['users']:
+        for user in searched_images:
+            if id == user['_500pxid']:
+                _500px_objects.append(user)
+
+    response = requests.post(
+        '%s/pin500px' % server_endpoint,
+        json={
+            'users': _500px_objects,
+            'username': session['user'],
+            'email': session['email']
+        }
+    )
+
+    return jsonify({'Success': True})
+
+
 @app.route('/dashboard')
 def dashboard():
     username = session['user']
@@ -304,11 +351,15 @@ def dashboard():
         '%s/get_pinpages/%s' % (server_endpoint, username)
     ).json()
 
+    response3 = requests.get(
+        '%s/get_500px/%s' % (server_endpoint, username)
+    ).json()
+
     if response:
         for image in response:
             image['base_url'] = urlparse(image['link']).netloc
 
-    return render_template('dashboard.html', fav_images=response, pin_pages=response2)
+    return render_template('dashboard.html', fav_images=response, pin_pages=response2, pin_500px=response3)
 
 
 @app.route('/')
