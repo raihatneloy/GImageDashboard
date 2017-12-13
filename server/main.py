@@ -54,6 +54,11 @@ manager.add_command('db', MigrateCommand)
 fb = None
 
 
+@app.route('/privacy')
+def privacy():
+    return "<h2>All privraecy and rights reserved</h2>"
+
+
 @app.route('/images/<query>', methods=['GET'])
 def get_images(query):
     query = query.replace('%20', ' ')
