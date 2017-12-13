@@ -4,10 +4,13 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from modules import get_images_url as gsearch
 from modules.facebook import facebook
+from modules._500px import _500px
 from models.users import users_model as users
 from models.users import add_new_user as new_user
 from models.fbpages import pages_model as pages
 from models.fbpages import get_page
+from models._500px import _500px_model
+from models._500px import get_500px
 from models.fbusers import fbuser_model as fb_user
 from models.images import images_model as images
 from models.images import get_image
@@ -42,9 +45,10 @@ app.config.update(
 
 # Initialize db
 db = SQLAlchemy(app)
-Users, favorite_images, pinned_pages = users(db)
+Users, favorite_images, pinned_pages, pinned_500px = users(db)
 Images = images(db)
 Pages = pages(db)
+_500pxdb = _500px_model(db)
 FBUsers = fb_user(db)
 migrate = Migrate(app, db)
 manager = Manager(app)
@@ -52,6 +56,7 @@ manager.add_command('db', MigrateCommand)
 
 # Initialize facebook class
 fb = None
+fpx = _500px(configs['500px_consumer_key'])
 
 
 @app.route('/privacy')
@@ -73,6 +78,14 @@ def get_pages(query):
     pages = fb.get_pages(query)
 
     return jsonify(pages)
+
+
+@app.route('/_500px/<query>', methods=['GET'])
+def get_500px_users(query):
+    query = query.replace('%20', ' ')
+    _500px_users = fpx.get_users(query)
+
+    return jsonify(_500px_users)
 
 
 @app.route('/register/new_user', methods=['POST'])
@@ -204,6 +217,26 @@ def add_to_pin():
     return jsonify({"Success": True})
 
 
+@app.route('/pin500px', methods=['POST'])
+def add_500px_pin():
+    data = json.loads(request.data)
+
+    _500px_users = data['users']
+    username = data['username']
+    email = data['email']
+
+    user = Users.query.filter((Users.username == username) | (Users.email == email)).first()
+
+    for _500px_user in _500px_users:
+        user_object = get_500px(db, _500pxdb, _500px_user)
+        user._500px.append(user_object)
+        print _500px_user
+    
+    db.session.commit()
+
+    return jsonify({'Success': True})
+
+
 @app.route('/get_favorites/<username>', methods=['GET'])
 def get_favorites(username):
     images = Images.query.join(favorite_images).join(Users).filter(Users.username == username).all()
@@ -235,6 +268,26 @@ def get_pinpages(username):
         body['picture'] = page.picture
 
         pages_dict.append(body)
+
+    return jsonify(pages_dict)
+
+
+@app.route('/get_500px/<username>', methods=['GET'])
+def get_500pxpin(username):
+    _500px_users = _500pxdb.query.join(pinned_500px).join(Users).filter(Users.username == username).all()
+
+    _500px_dict = []
+
+    for _500px_user in _500px_users:
+        body = {}
+
+        body['name'] = _500px_user.name
+        body['_500pxid'] = _500px_user._500pxid
+        body['username'] = _500px_user.username
+        body['cover'] = _500px_user.cover
+        body['picture'] = _500px_user.picture
+
+        _500px_dict.append(body)
 
     return jsonify(pages_dict)
 
