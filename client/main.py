@@ -43,9 +43,30 @@ def add_header(response):
     return response
 
 
+@app.route('/get_fbinfo')
+def get_fbinfo():
+    if session.get('facebook_id'):
+        del session['facebook_id']
+        del session['facebook_name']
+    
+    response = requests.post(
+            '%s/get_fbuser_token' % server_endpoint,
+            json={
+                'username': session.get('user')
+            }
+        ).json()
+
+    session['facebook_id'] = response.get('facebook_id')
+    session['facebook_name'] = response.get('facebook_name')
+
+    return jsonify(response)
+
+
 def check_auth():
     if not session.get('user'):
         return False
+
+    get_fbinfo()
 
     return True
 
@@ -107,6 +128,11 @@ def logout():
 
 @app.route('/fb_auth')
 def fb_auth():
+    get_fbinfo()
+
+    if session.get('facebook_id'):
+        return redirect(url_for('search_fb'))
+
     uri = '%s?client_id=%s&redirect_uri=%s&response_type=token' % (fb_oauth_uri, configs['facebook_client_id'], url_for('fb_callback', _external=True))
 
     return redirect(uri)
@@ -145,6 +171,7 @@ def facebook_callback():
 
 @app.route('/fb_auth_remove')
 def fb_auth_remove():
+    check_auth()
     response = requests.post(
             '%s/remove_fbuser' % server_endpoint,
             json={
@@ -197,8 +224,6 @@ def search_fb(keyword):
 
     global searched_images
     searched_images = search_result
-
-    print searched_images
 
     return render_template('search.html', images=search_result, type='facebook')
 

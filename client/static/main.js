@@ -88,18 +88,32 @@ $(function() {
 	}
 	var search_page = function(){
 		var keyword = $('#facebooksearch').val();
+		var fb_info = {};
 
-		if (keyword === ''){
-			create_alert({'Error': 'Please Specify any search keyword'})
-			return;
-		}
+		$.ajax({
+			url: Flask.url_for('get_fbinfo'),
+			type: 'GET',
+			success: function(fb_info){
+				if (keyword === ''){
+					create_alert({'Error': 'Please Specify any search keyword'})
+					return;
+				}
 
-		if ($('#fb_not_connected').length){
-			create_alert({'Error': 'Please Connect with your facebook account. Click the Connect button!'})
-			return;
-		}
+				if (!fb_info['facebook_id']){
+					create_alert({'Error': 'Please Connect with your facebook account. Click the Connect button!'})
+					
+					$('#fbpage_div').load(' #fbpage_div');
+					$('#fbpage_show').load(' #fbpage_show');
+					
+					return;
+				}
 
-		window.location = Flask.url_for('search_fb', {"keyword": keyword});
+				window.location = Flask.url_for('search_fb', {"keyword": keyword});
+			},
+			error: function(response){
+				console.log('response');
+			}
+		});
 	}
 	$('#login-submit').click(function(e){
 		login_submit(e);

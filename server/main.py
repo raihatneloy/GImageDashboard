@@ -151,6 +151,21 @@ def remove_fbuser():
     return jsonify({"Success": "Facebook Disconnected"})
 
 
+@app.route('/get_fbuser_token', methods=['POST'])
+def get_fbuser_token():
+    data = json.loads(request.data)
+
+    fb_info = FBUsers.query.join(Users).filter(Users.username == data['username']).first()
+
+    res = { 'Success': 'Query Done' }
+
+    if fb_info:
+        res['facebook_name'] = fb_info.name
+        res['facebook_id'] = fb_info.fbid
+
+    return jsonify(res)
+
+
 @app.route('/favorite', methods=['POST'])
 def add_to_favorite():
     data = json.loads(request.data)

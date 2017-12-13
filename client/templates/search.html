@@ -72,7 +72,7 @@
                             <br/>
                         </div>
                         <br/>
-                        <div>
+                        <div id="fbpage_div">
                             {% if session['facebook_id'] %}
                             <div id="fb_connected">
                                 <a class="btn btn-danger" href="{{ url_for('fb_auth_remove') }}"><i class="glyphicon glyphicon-remove"></i> Disconnect </a>
@@ -82,14 +82,14 @@
                             <div id="fb_not_connected">
                                 <a class="btn btn-success" href="{{ url_for('fb_auth') }}"><i class="glyphicon glyphicon-user"></i> Connect to FaceBook </a>
                                 Please connect with your facebook profile to make the search
-                            <div>
+                            </div>
                             {% endif %}
                             <br/>
                             <input type="button" class="btn btn-primary" id="add_facebookpage" value="Pin selected Pages to Dashboard">
                         </div>
                         <br/><br/>
-                        <div>
-                            {% if type == 'facebook' and images %}
+                        <div id="fbpage_show">
+                            {% if session['facebook_id'] and type == 'facebook' and images %}
                                 {% set index = 0 %}
                                 {% for image in images %}
                                     {% set index = index + 1 %}
