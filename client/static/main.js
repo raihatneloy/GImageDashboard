@@ -86,6 +86,7 @@ $(function() {
 		}
 
 		window.location = Flask.url_for('search', {"keyword": keyword});
+		return;
 	};
 	var search_page = function(){
 		var keyword = $('#facebooksearch').val();

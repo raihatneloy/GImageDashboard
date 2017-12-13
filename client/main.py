@@ -228,19 +228,25 @@ def search_fb(keyword):
     return render_template('search.html', images=search_result, type='facebook')
 
 
-@app.route('/search/_500px', defaults={'keyword': None})
-@app.route('/search/_500px/<keyword>')
+@app.route('/search/500px', defaults={'keyword': None})
+@app.route('/search/500px/<keyword>')
 def search_500px(keyword):
     if not check_auth():
         return redirect(url_for('login', _external=True))
 
     search_result = None
-
-    if keyword:
-        search_result = requests.get('%s/_500px/%s' % (server_endpoint, keyword)).json()
-    
     global searched_images
-    searched_images = search_result
+    print keyword
+    if keyword == '':
+        return redirect(url_for('search/_500px'))
+
+    if keyword and keyword != 'None':
+        print keyword
+        search_result = requests.get('%s/_500px/%s' % (server_endpoint, keyword)).json()
+        searched_images = search_result
+    
+    print keyword
+    print searched_images
 
     return render_template('search.html', images=search_result, type='500px')
 
@@ -319,12 +325,15 @@ def add_500px():
         selected_500px = key
     
     selected_500px = json.loads(selected_500px)
+    print selected_500px
     _500px_objects = []
     global searched_images
+    print searched_images
 
     for id in selected_500px['users']:
         for user in searched_images:
-            if id == user['_500pxid']:
+            if int(id) == int(user['_500pxid']):
+                print id, user['_500pxid']
                 _500px_objects.append(user)
 
     response = requests.post(
