@@ -173,6 +173,8 @@ def get_fbuser_token():
     res = { 'Success': 'Query Done' }
 
     if fb_info:
+        global fb
+        fb = facebook(fb_info.access_token)
         res['facebook_name'] = fb_info.name
         res['facebook_id'] = fb_info.fbid
 
