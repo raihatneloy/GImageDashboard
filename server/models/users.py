@@ -18,6 +18,11 @@ def users_model(db):
 			db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
 			db.Column('_500pxid', db.Integer, db.ForeignKey('_500px.id'))
 		)
+	pinned_flickr = db.Table(
+			'pinned_flickr',
+			db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+			db.Column('flickr_id', db.Integer, db.ForeignKey('flickr.id'))
+		)
 
 	class Users(db.Model):
 		__tablename__ = 'users'
@@ -35,6 +40,9 @@ def users_model(db):
 		_500px = db.relationship("_500px",
 						secondary=pinned_500px
 					)
+		flickr = db.relationship("Flickr",
+						secondary=pinned_flickr
+					)
 		fbuser = db.relationship('FBUser',
 						backref='fbusers'
 					)
@@ -45,7 +53,7 @@ def users_model(db):
 			self.email = email
 			self.password = password
 
-	return Users, favorite_images, pinned_pages, pinned_500px
+	return Users, favorite_images, pinned_pages, pinned_500px, pinned_flickr
 
 
 def add_new_user(db, Users, data):

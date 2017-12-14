@@ -5,12 +5,15 @@ from flask_migrate import Migrate, MigrateCommand
 from modules import get_images_url as gsearch
 from modules.facebook import facebook
 from modules._500px import _500px
+from modules.flickr import Flickr as FlickrSearch
 from models.users import users_model as users
 from models.users import add_new_user as new_user
 from models.fbpages import pages_model as pages
 from models.fbpages import get_page
 from models._500px import _500px_model
 from models._500px import get_500px
+from models.flickr import flickr_model as flickr
+from models.flickr import get_flickr
 from models.fbusers import fbuser_model as fb_user
 from models.images import images_model as images
 from models.images import get_image
@@ -45,10 +48,11 @@ app.config.update(
 
 # Initialize db
 db = SQLAlchemy(app)
-Users, favorite_images, pinned_pages, pinned_500px = users(db)
+Users, favorite_images, pinned_pages, pinned_500px, pinned_flickr = users(db)
 Images = images(db)
 Pages = pages(db)
 _500pxdb = _500px_model(db)
+Flickr = flickr(db)
 FBUsers = fb_user(db)
 migrate = Migrate(app, db)
 manager = Manager(app)
@@ -86,6 +90,14 @@ def get_500px_users(query):
     _500px_users = fpx.get_users(query)
 
     return jsonify(_500px_users)
+
+
+@app.route('/flickr/<query>', methods=['GET'])
+def get_flickr_search(query):
+    query = query.replace('%20', ' ')
+    flickr_users = FlickrSearch().get_flickr_users(query)
+
+    return jsonify(flickr_users)
 
 
 @app.route('/register/new_user', methods=['POST'])
@@ -239,6 +251,25 @@ def add_500px_pin():
     return jsonify({'Success': True})
 
 
+@app.route('/pinflickr', methods=['POST'])
+def add_flickr():
+    data = json.loads(request.data)
+
+    flickr_users = data['flickr']
+    username = data['username']
+    email = data['email']
+
+    user = Users.query.filter((Users.username == username) | (Users.email == email)).first()
+
+    for flickr_user in flickr_users:
+        flickr_object = get_flickr(db, Flickr, flickr_user)
+        user.flickr.append(flickr_object)
+
+    db.session.commit()
+
+    return jsonify({'Success': True})
+
+
 @app.route('/get_favorites/<username>', methods=['GET'])
 def get_favorites(username):
     images = Images.query.join(favorite_images).join(Users).filter(Users.username == username).all()
@@ -292,6 +323,26 @@ def get_500pxpin(username):
         _500px_dict.append(body)
 
     return jsonify(_500px_dict)
+
+
+@app.route('/get_flickr/<username>', methods=['GET'])
+def get_flickrs(username):
+    flickr_users = Flickr.query.join(pinned_flickr).join(Users).filter(Users.username == username).all()
+
+    flickr_dict = []
+
+    for flickr_user in flickr_users:
+        body = {}
+
+        body['name'] = flickr_user.name
+        body['username'] = flickr_user.username
+        body['picture'] = flickr_user.picture
+        body['flickr_id'] = flickr_user.flickr_id
+        body['follower'] = flickr_user.follower
+
+        flickr_dict.append(body)
+
+    return jsonify(flickr_dict)
 
 
 if __name__ == "__main__":
