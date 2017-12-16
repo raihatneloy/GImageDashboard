@@ -238,7 +238,7 @@ def search_500px(keyword):
     global searched_images
     print keyword
     if keyword == '':
-        return redirect(url_for('search/_500px'))
+        return redirect(url_for('search_500px'))
 
     if keyword and keyword != 'None':
         print keyword
@@ -249,6 +249,25 @@ def search_500px(keyword):
     print searched_images
 
     return render_template('search.html', images=search_result, type='500px')
+
+
+@app.route('/search/flickr', defaults={'keyword': None})
+@app.route('/search/flickr/<keyword>')
+def search_flickr(keyword):
+    if not check_auth():
+        return redirect(url_for('login', _external=True))
+
+    search_result = None
+    global searched_images
+
+    if keyword == '':
+        return redirect(url_for('search_flickr'))
+
+    if keyword and keyword != 'None':
+        search_result = requests.get('%s/flickr/%s' % (server_endpoint, keyword)).json()
+        searched_images = search_result
+
+    return render_template('search.html', images=search_result, type='flickr')
 
 
 @app.route('/add_favorite', methods=['POST'])
@@ -348,6 +367,36 @@ def add_500px():
     return jsonify({'Success': True})
 
 
+@app.route('/add_flickr', methods=['POST'])
+def add_flickr():
+    x = request.form.to_dict(flat=False)
+
+    selected_flickr = None
+
+    for key, value in x.iteritems():
+        selected_flickr = key
+
+    selected_flickr = json.loads(selected_flickr)
+    flickr_objects = []
+    global searched_images
+
+    for id in selected_flickr['flickr']:
+        for user in searched_images:
+            if str(id) == str(user['flickr_id']):
+                flickr_objects.append(user)
+
+    response = requests.post(
+        '%s/pinflickr' % server_endpoint,
+        json={
+            'flickr': flickr_objects,
+            'username': session['user'],
+            'email': session['email']
+        }
+    )
+
+    return jsonify({'Success': True})
+
+
 @app.route('/dashboard')
 def dashboard():
     username = session['user']
@@ -364,11 +413,15 @@ def dashboard():
         '%s/get_500px/%s' % (server_endpoint, username)
     ).json()
 
+    response4 = requests.get(
+        '%s/get_flickr/%s' % (server_endpoint, username)
+    ).json()
+
     if response:
         for image in response:
             image['base_url'] = urlparse(image['link']).netloc
 
-    return render_template('dashboard.html', fav_images=response, pin_pages=response2, pin_500px=response3)
+    return render_template('dashboard.html', fav_images=response, pin_pages=response2, pin_500px=response3, pin_flickr=response4)
 
 
 @app.route('/')

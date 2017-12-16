@@ -16,11 +16,14 @@ class Flickr:
         for user in data:
             body = {}
 
-            body['username'] = user['username']
-            body['name'] = user['realname']
-            body['flickr_id'] = user['id']
-            body['follower'] = user['followersCount']
+            body['username'] = user.get('username')
+            body['name'] = user.get('realname', body['username'])
+            body['flickr_id'] = user.get('id')
+            body['follower'] = user.get('followersCount', 0)
             body['picture'] = 'http://farm%s.staticflickr.com/%s/buddyicons/%s.jpg' % (user['iconfarm'], user['iconserver'], user['id'])
+
+            if body['name'] == '':
+                body['name'] = body['username']
 
             info.append(body)
 

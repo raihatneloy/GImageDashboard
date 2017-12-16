@@ -30,6 +30,13 @@
                         {% endif %}
                             <a href="#500pxUsers" data-toggle="tab">500px Users Search</a>
                         </li>
+                        {% if type == 'flickr' %}
+                        <li class="active">
+                        {% else %}
+                        <li>
+                        {% endif %}
+                            <a href="#FlickrSearch" data-toggle="tab">Flickr Users Search</a>
+                        </li>
                     </ul>
             </div>
             <div class="panel-body">
@@ -142,6 +149,39 @@
                                         </label>
                                         <div style="white-space: nowrap;">
                                         <a target="_blank" href="https://www.500px.com/{{ image['username'] }}" class="text-success">{{ image['name'] }}</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if type == 'flickr' %}
+                    <div class="tab-pane fade in active" id="FlickrSearch">
+                    {% else %}
+                    <div class="tab-pane fade in" id="FlickrSearch">
+                    {% endif %}
+                        <div class="input-group">
+                            <div id="logo" name="logo" class="input-group-addon" style="line-height:2; z-index: 100;"><i class="glyphicon glyphicon-search"></i></div>
+                            <input id="flickrsearch" name="search" type="text" class="form-control input-text" style="z-index: 100" placeholder="Search keywords">
+                            <br/>
+                        </div>
+                        <br/>
+                        <div>
+                            <input type="button" class="btn btn-primary" id="add_flickr" value="Pin selected users in your Flickr dashboard">
+                        </div>
+                        <br/><br/>
+                        <div>
+                            {% if type == 'flickr' and images %}
+                                {% for image in images %}
+                                    <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
+                                        <label class="image-checkbox">
+                                          <img id="search-img" name="{{ image['flickr_id'] }}" class="img-thumbnail facebook-cover" src="{{ image['picture'] }}" style="filter: blur(100);" />
+                                          <img id="search-img" name="{{ image['flickr_id'] }}" class="img-thumbnail facebook-profile" src="{{ image['picture'] }}" />
+                                          <input type="checkbox" name="image[]" value="" />
+                                          <i class="fa fa-check hidden"></i>
+                                        </label>
+                                        <div style="white-space: nowrap;">
+                                        <a target="_blank" href="https://www.flickr.com/people/{{ image['flickr_id'] }}" class="text-success">{{ image['name'] }}</a>
                                         </div>
                                     </div>
                                 {% endfor %}

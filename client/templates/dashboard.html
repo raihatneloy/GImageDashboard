@@ -21,6 +21,9 @@
                         <li>
                             <a href="#FpxDashboard" data-toggle="tab">500px Pinned Users</a>
                         </li>
+                        <li>
+                            <a href="#FlickrDashboard" data-toggle="tab">Flickr Pinned Users</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="panel-body">
@@ -69,7 +72,21 @@
                                 {% endfor %}
                             {% endif %}
                         </div>
-
+                        <div class="tab-pane fade" id="FlickrDashboard">
+                            {% if pin_flickr %}
+                                {% for user in pin_flickr %}
+                                    <div class="col-xs-4 col-sm-4 col-md-3 nopad text-center">
+                                        <label>
+                                          <img id="search-img" name="{{ user['flickr_id'] }}" class="img-thumbnail facebook-cover" src="{{ user['picture'] }}" />
+                                          <img id="search-img" name="{{ user['flickr_id'] }}" class="img-thumbnail facebook-profile" src="{{ user['picture'] }}" />
+                                        </label>
+                                        <div style="white-space: nowrap;">
+                                        <a target="_blank" href="https://www.flickr.com/people/{{ user['flickr_id'] }}" class="text-success">{{ user['name'] }}</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
