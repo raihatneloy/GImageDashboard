@@ -137,6 +137,18 @@ $(function() {
 
 		window.location = Flask.url_for('search_flickr', {"keyword": keyword});
 	}
+	$('#profile-picture').on('change', function(event){
+		$('#preview').attr('src', URL.createObjectURL(event.target.files[0]));
+		// var preview = document.getElementById('preview');
+		// preview.src = URL.createObjectURL(event.target.files[0]);
+	});
+	$('#certificate-submit').click(function(e){
+		$('#certificate-div').removeAttr('style');
+		$('#description-form').attr('style', 'display: none;');
+		$('#certified-name').text($('#certified-to').val());
+		$('#certified-title').text($('#certification-title').val());
+		console.log($('#certified-to').val());
+	});
 	$('#login-submit').click(function(e){
 		login_submit(e);
 	});

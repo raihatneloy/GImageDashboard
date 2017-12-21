@@ -424,6 +424,13 @@ def dashboard():
     return render_template('dashboard.html', fav_images=response, pin_pages=response2, pin_500px=response3, pin_flickr=response4)
 
 
+@app.route('/certify')
+def certify():
+    if not check_auth():
+        return redirect(url_for('login', _external=True))
+    return render_template('certificate.html')
+
+
 @app.route('/')
 def index():
     if not session.get('user'):

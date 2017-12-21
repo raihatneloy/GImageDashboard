@@ -51,6 +51,39 @@
     padding-left: 10%;
 }
 
+.certificate-div {
+    position: relative;
+    width: 100%;
+    padding-bottom: 55%;
+}
+
+.certificate-back {
+    width: 100%;
+    position: absolute;
+}
+
+.centered{
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.preview {
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    width: 20%;
+    height: 40%;
+    object-fit: cover; /* Do not scale the image */
+    object-position: center; /* Center the image within the element */
+    /*height: 200px;
+    width: 200px;*/
+}
+
 .avatar-circle {
   width: 100px;
   height: 100px;

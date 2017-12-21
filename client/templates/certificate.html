@@ -1,0 +1,44 @@
+{% extends "layouts.html" %}
+
+{% block body %}
+
+<div class="container">
+    <div id="description-form" class="row" >
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form id="certificate-form">
+                            <div class="form-group">
+                                Name
+                                <input type="text" name="certified-to" id="certified-to" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                Certification Title
+                                <input type="text" name="certification-title" id="certification-title" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                Upload Picture
+                                <input type="file" name="profile-picture" accept="image/*" id="profile-picture" class="form-control">
+                            </div>
+                            <div>
+                                <input type="button" name="login-submit" id="certificate-submit" tabindex="4" class="form-control btn btn-login" value="Submit" >
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="certificate-div" class="certificate-div" style="display: none">
+        <img class="certificate-back" src="{{ url_for('static', filename='Certificate.png') }}"/>
+        <img class="img-thumbnail preview" id="preview" src="#">
+        <div class="centered">
+            <font color="white" size="5">Certified to</font><br/>
+            <font color="white" size="8"><div id="certified-name">Test</div></font>
+            <font color="white" size="6"><div id="certified-title">Test</div></font>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
