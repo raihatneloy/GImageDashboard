@@ -144,10 +144,16 @@ $(function() {
 	});
 	$('#certificate-submit').click(function(e){
 		$('#certificate-div').removeAttr('style');
+		$('#edit-button').removeAttr('style');
 		$('#description-form').attr('style', 'display: none;');
 		$('#certified-name').text($('#certified-to').val());
 		$('#certified-title').text($('#certification-title').val());
 		console.log($('#certified-to').val());
+	});
+	$('#edit-button').click(function(){
+		$('#certificate-div').attr('style', 'display: none');
+		$('#edit-button').attr('style', 'display: none');
+		$('#description-form').removeAttr('style');
 	});
 	$('#login-submit').click(function(e){
 		login_submit(e);
