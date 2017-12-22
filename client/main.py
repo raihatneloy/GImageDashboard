@@ -424,11 +424,19 @@ def dashboard():
     return render_template('dashboard.html', fav_images=response, pin_pages=response2, pin_500px=response3, pin_flickr=response4)
 
 
-@app.route('/certify')
+@app.route('/certify', methods=['GET', 'POST'])
 def certify():
     if not check_auth():
         return redirect(url_for('login', _external=True))
     return render_template('certificate.html')
+
+
+@app.route('/save_file', methods=['POST'])
+def save_file():
+    print request.files
+    with open('%s/static/upload/%s' % (os.path.dirname(os.path.realpath(__file__)), request.form['name']), "w") as fp:   
+        request.files['profile-picture'].save(fp)
+    return jsonify({"success": True})
 
 
 @app.route('/')

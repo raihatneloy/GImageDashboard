@@ -3,6 +3,7 @@ $(function() {
     var alert_error = $('<div class="alert alert-danger alert-dismissible"></div>')
     var close_button = $('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>')
     var selected_images = [];
+    var frm;
     $('#login-form-link').click(function(e) {
 		$("#login-form").delay(100).fadeIn(100);
  		$("#register-form").fadeOut(100);
@@ -139,20 +140,88 @@ $(function() {
 	}
 	$('#profile-picture').on('change', function(event){
 		$('#preview').attr('src', URL.createObjectURL(event.target.files[0]));
+		console.log(URL.createObjectURL(event.target.files[0]));
+		frm = new FormData();
+		frm.append('profile-picture', event.target.files[0]);
 		// var preview = document.getElementById('preview');
 		// preview.src = URL.createObjectURL(event.target.files[0]);
 	});
 	$('#certificate-submit').click(function(e){
 		$('#certificate-div').removeAttr('style');
 		$('#edit-button').removeAttr('style');
+		$('#code-block').removeAttr('style');
 		$('#description-form').attr('style', 'display: none;');
 		$('#certified-name').text($('#certified-to').val());
 		$('#certified-title').text($('#certification-title').val());
 		console.log($('#certified-to').val());
+
+		frm.append('name', $('#certified-to').val());
+		frm.append('name', $('#certification-title').val());
+
+		var code=`CSS:
+.certificate-div {
+    position: relative;
+    width: 100%;
+    padding-bottom: 55%;
+}
+
+.certificate-back {
+    width: 100%;
+    position: absolute;
+}
+
+.centered{
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.preview {
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    width: 20%;
+    height: 40%;
+    object-fit: cover; /* Do not scale the image */
+    object-position: center; /* Center the image within the element */
+    /*height: 200px;
+    width: 200px;*/
+}
+
+HTML:
+<div class="container">
+	<div id="certificate-div" class="certificate-div">
+	    <img class="certificate-back" src="http://163.53.149.166:5001/static/Certificate.png"/>
+	    <img class="img-thumbnail preview" id="preview" src="http://163.53.149.166:5001/static/upload/` + $('#certified-to').val() +`">
+	    <div class="centered">
+	        <font color="white" size="5">Certified to</font><br/>
+	        <font color="white" size="8">` + $('#certified-to').val() + `</font>
+	        <font color="white" size="6">` + $('#certification-title').val() + `</font>
+	    </div>
+	</div>
+</div>`;
+
+		console.log(code);
+
+		$.ajax({
+	        method: 'POST',
+	        url: Flask.url_for('save_file'),
+	        data: frm,
+	        contentType: false,
+	        processData: false,
+	        cache: false
+	    });
+
+		$('#code-preview').text(code);
 	});
 	$('#edit-button').click(function(){
 		$('#certificate-div').attr('style', 'display: none');
 		$('#edit-button').attr('style', 'display: none');
+		$('#code-block').attr('style', 'display: none');
 		$('#description-form').removeAttr('style');
 	});
 	$('#login-submit').click(function(e){
