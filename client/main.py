@@ -444,6 +444,7 @@ def save_file():
 def rotate():
     upload_path = '%s/static/upload/%s.jpg' % (os.path.dirname(os.path.realpath(__file__)), request.form['name'])
     img = Image.open(upload_path)
+    img = img.convert('RGB')
     rotated_img = img.rotate(int(request.form['angle']), expand=True)
     rotated_img.save(upload_path)
 
