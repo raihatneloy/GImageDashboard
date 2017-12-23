@@ -4,6 +4,31 @@ $(function() {
     var close_button = $('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>')
     var selected_images = [];
     var frm;
+    function refresh(node)
+	{
+	   var times = 1000; // gap in Milli Seconds;
+
+	   (function startRefresh()
+	   {
+	      var address;
+	      if(node.src.indexOf('?')>-1)
+	       address = node.src.split('?')[0];
+	      else 
+	       address = node.src;
+	      node.src = address+"?time="+new Date().getTime();
+
+	      setTimeout(startRefresh,times);
+	   })();
+
+	}
+
+	window.onload = function()
+	{
+	  var node = document.getElementById('preview');
+	  refresh(node);
+	  // you can refresh as many images you want just repeat above steps
+	}
+    var dns = 'http://163.53.149.166:5001'
     $('#login-form-link').click(function(e) {
 		$("#login-form").delay(100).fadeIn(100);
  		$("#register-form").fadeOut(100);
@@ -147,6 +172,7 @@ $(function() {
 		// preview.src = URL.createObjectURL(event.target.files[0]);
 	});
 	$('#certificate-submit').click(function(e){
+		$('#preview').attr('src', dns+ '/static/upload/' + $('#certified-to').val() + '.jpg');
 		$('#certificate-div').removeAttr('style');
 		$('#edit-button').removeAttr('style');
 		$('#code-block').removeAttr('style');
@@ -195,8 +221,8 @@ $(function() {
 HTML:
 <div class="container">
 	<div id="certificate-div" class="certificate-div">
-	    <img class="certificate-back" src="http://163.53.149.166:5001/static/Certificate.png"/>
-	    <img class="img-thumbnail preview" id="preview" src="http://163.53.149.166:5001/static/upload/` + $('#certified-to').val() +`">
+	    <img class="certificate-back" src="` + dns + `/static/Certificate.png"/>
+	    <img class="img-thumbnail preview" id="preview" src="` + dns + `/static/upload/` + $('#certified-to').val() +`.jpg">
 	    <div class="centered">
 	        <font color="white" size="5">Certified to</font><br/>
 	        <font color="white" size="8">` + $('#certified-to').val() + `</font>
@@ -218,11 +244,39 @@ HTML:
 
 		$('#code-preview').text(code);
 	});
-	$('#edit-button').click(function(){
+	$('#edit-form').click(function(){
 		$('#certificate-div').attr('style', 'display: none');
 		$('#edit-button').attr('style', 'display: none');
 		$('#code-block').attr('style', 'display: none');
 		$('#description-form').removeAttr('style');
+	});
+	$('#anti-clockwise').click(function(){
+		rotate_frm = new FormData()
+		rotate_frm.append('name', $('#certified-to').val())
+		rotate_frm.append('angle', 90);
+		$.ajax({
+	        method: 'POST',
+	        url: Flask.url_for('rotate'),
+	        data: rotate_frm,
+	        contentType: false,
+	        processData: false,
+	        cache: false
+	    });
+		console.log($('#preview').attr('style'));
+	});
+	$('#clockwise').click(function(){
+		rotate_frm = new FormData()
+		rotate_frm.append('name', $('#certified-to').val())
+		rotate_frm.append('angle', -90);
+		$.ajax({
+	        method: 'POST',
+	        url: Flask.url_for('rotate'),
+	        data: rotate_frm,
+	        contentType: false,
+	        processData: false,
+	        cache: false
+	    });
+		console.log($('#preview').attr('style'));
 	});
 	$('#login-submit').click(function(e){
 		login_submit(e);

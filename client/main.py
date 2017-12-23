@@ -4,6 +4,7 @@ from flask_jsglue import JSGlue
 from tables.authentication import Login, Register
 from werkzeug.datastructures import ImmutableMultiDict
 from urlparse import urlparse
+from PIL import Image
 import os
 import json
 import requests
@@ -434,8 +435,18 @@ def certify():
 @app.route('/save_file', methods=['POST'])
 def save_file():
     print request.files
-    with open('%s/static/upload/%s' % (os.path.dirname(os.path.realpath(__file__)), request.form['name']), "w") as fp:   
+    with open('%s/static/upload/%s.jpg' % (os.path.dirname(os.path.realpath(__file__)), request.form['name']), "w") as fp:   
         request.files['profile-picture'].save(fp)
+    return jsonify({"success": True})
+
+
+@app.route('/rotate', methods=['POST'])
+def rotate():
+    upload_path = '%s/static/upload/%s.jpg' % (os.path.dirname(os.path.realpath(__file__)), request.form['name'])
+    img = Image.open(upload_path)
+    rotated_img = img.rotate(int(request.form['angle']), expand=True)
+    rotated_img.save(upload_path)
+
     return jsonify({"success": True})
 
 
