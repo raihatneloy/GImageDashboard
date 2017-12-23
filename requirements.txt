@@ -12,3 +12,4 @@ mysql-python==1.2.5
 requests-oauthlib==0.8.0
 wtforms==2.1
 selenium==3.8.0
+Pillow==4.3.0
