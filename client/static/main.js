@@ -4,7 +4,8 @@ $(function() {
     var close_button = $('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>')
     var selected_images = [];
     var frm;
-    function refresh(node)
+    var angle = 0;
+    /*function refresh(node)
 	{
 	   var times = 1000; // gap in Milli Seconds;
 
@@ -27,7 +28,7 @@ $(function() {
 	  var node = document.getElementById('preview');
 	  refresh(node);
 	  // you can refresh as many images you want just repeat above steps
-	}
+	}*/
     var dns = 'http://163.53.149.166:5001'
     $('#login-form-link').click(function(e) {
 		$("#login-form").delay(100).fadeIn(100);
@@ -172,7 +173,7 @@ $(function() {
 		// preview.src = URL.createObjectURL(event.target.files[0]);
 	});
 	$('#certificate-submit').click(function(e){
-		$('#preview').attr('src', dns+ '/static/upload/' + $('#certified-to').val() + '.jpg');
+		//$('#preview').attr('src', dns+ '/static/upload/' + $('#certified-to').val() + '.jpg');
 		$('#certificate-div').removeAttr('style');
 		$('#edit-button').removeAttr('style');
 		$('#code-block').removeAttr('style');
@@ -251,8 +252,8 @@ HTML:
 		$('#description-form').removeAttr('style');
 	});
 	$('#anti-clockwise').click(function(){
-		rotate_frm = new FormData()
-		rotate_frm.append('name', $('#certified-to').val())
+		rotate_frm = new FormData();
+		rotate_frm.append('name', $('#certified-to').val());
 		rotate_frm.append('angle', 90);
 		$.ajax({
 	        method: 'POST',
@@ -262,7 +263,8 @@ HTML:
 	        processData: false,
 	        cache: false
 	    });
-		console.log($('#preview').attr('style'));
+	    angle -= 90;
+		$('#preview').attr('style', 'transform: rotate('+ (angle) +'deg);');
 	});
 	$('#clockwise').click(function(){
 		rotate_frm = new FormData()
@@ -276,7 +278,8 @@ HTML:
 	        processData: false,
 	        cache: false
 	    });
-		console.log($('#preview').attr('style'));
+		angle += 90;
+		$('#preview').attr('style', 'transform: rotate('+ (angle) +'deg);');
 	});
 	$('#login-submit').click(function(e){
 		login_submit(e);
