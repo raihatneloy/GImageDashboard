@@ -434,9 +434,14 @@ def certify():
 
 @app.route('/save_file', methods=['POST'])
 def save_file():
-    print request.files
-    with open('%s/static/upload/%s.jpg' % (os.path.dirname(os.path.realpath(__file__)), request.form['name']), "w") as fp:   
+    upload_path = '%s/static/upload/%s.jpg' % (os.path.dirname(os.path.realpath(__file__)), request.form['name'])
+
+    with open(upload_path, "w") as fp:
         request.files['profile-picture'].save(fp)
+
+    img = Image.open(upload_path)
+    img.save(upload_path, optimize=True,quality=40)
+
     return jsonify({"success": True})
 
 
