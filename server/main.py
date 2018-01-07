@@ -17,6 +17,8 @@ from models.flickr import get_flickr
 from models.fbusers import fbuser_model as fb_user
 from models.images import images_model as images
 from models.images import get_image
+from models.badge import badge_model as badge
+from models.badge import add_or_update_badge as get_badge_db
 import base64
 import json
 import requests
@@ -54,6 +56,7 @@ Pages = pages(db)
 _500pxdb = _500px_model(db)
 Flickr = flickr(db)
 FBUsers = fb_user(db)
+Badge = badge(db)
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
@@ -270,6 +273,23 @@ def add_flickr():
     return jsonify({'Success': True})
 
 
+@app.route('/add_badge', methods=['POST'])
+def add_badge():
+    data = json.loads(request.data)
+
+    badge_object = get_badge_db(db, Badge, data)
+
+    return jsonify({
+            'badge_id': badge_object.badge_id,
+            'name': badge_object.name,
+            'title': badge_object.title,
+            'country': badge_object.country,
+            'catagory': badge_object.catagory,
+            'month': badge_object.month,
+            'year': badge_object.year
+        })
+
+
 @app.route('/get_favorites/<username>', methods=['GET'])
 def get_favorites(username):
     images = Images.query.join(favorite_images).join(Users).filter(Users.username == username).all()
@@ -343,6 +363,21 @@ def get_flickrs(username):
         flickr_dict.append(body)
 
     return jsonify(flickr_dict)
+
+
+@app.route('/badge/<badge_id>', methods=['GET'])
+def get_badge(badge_id):
+    badge_object = Badge.query.filter(Badge.badge_id == badge_id).first()
+
+    data = {}
+
+    data['img'] = '%s/static/badge-%s.png' % (configs['dns'], badge_object.title)
+    data['country'] = badge_object.country
+    data['catagory'] = badge_object.catagory
+    data['month'] = badge_object.month
+    data['year'] = badge_object.year
+
+    return jsonify(data)
 
 
 if __name__ == "__main__":
