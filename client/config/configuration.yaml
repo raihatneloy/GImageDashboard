@@ -4,3 +4,5 @@ facebook_client_secret: 48f25f9a9becd69aaefbe43369b6db05
 flickr_id: 1b9481236486ad2ec6179e812750b106
 flickr_secret: 0225b2edd81fa4c6
 dns: http://163.53.149.166:5001
+ssl_crt_file: /etc/ssl/certs/apache-selfsigned.crt
+ssl_key_file: /etc/ssl/certs/apache-selfsigned.crt

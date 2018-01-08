@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, render_template, session, url_for, redirect
 from flask_script import Manager
 from flask_jsglue import JSGlue
+from OpenSSL import SSL
 from tables.authentication import Login, Register
 from werkzeug.datastructures import ImmutableMultiDict
 from urlparse import urlparse
@@ -16,11 +17,18 @@ client_dir = os.path.dirname(os.path.abspath(__file__))
 # Load config file
 configs = yaml.load(open('%s/config/configuration.yaml' % client_dir).read())
 
+# SSL config
+if os.path.exists(configs['ssl_key_file']):
+    context = SSL.Context(SSL.SSLv23_METHOD)
+    context.use_privatekey_file(configs['ssl_key_file'])
+    context.use_certificate_file(configs['ssl_crt_file'])
+
 # Initialize app
 app = Flask(__name__)
 app.config.update(
     DEBUG=True,
-    SECRET_KEY='7d441f27d441f27567d441f2b6176a'
+    SECRET_KEY='7d441f27d441f27567d441f2b6176a',
+    SSL_CONTEXT=context if os.path.exists(configs['ssl_key_file']) else None
 )
 
 # Backend url
