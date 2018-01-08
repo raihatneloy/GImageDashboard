@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Badge for id {{ vars['id'] }}</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}"/>
+</head>
+<body>
+	<div style="position: relative; width: {{ vars['size'] }}px; height: {{ vars['size'] }}px; background-image: url('{{ vars['data']['img'] }}'); background-size: 100% 100%">
+		<div style="position:absolute; top: 65%; height: 34%; width: 100%">
+			<font face="Arial" size="{{ vars['country_size'] }}px" style="position:absolute;top:18%;left:50%; transform: translate(-50%,-50%);">{{ vars['data']['country'] }}</font>
+			<font face="Arial" size="{{ vars['catagory_size'] }}px" style="position:absolute;top:40%;left:50%; transform: translate(-50%,-50%);">{{ vars['data']['catagory'] }}</font>
+			<font face="Arial" size="{{ vars['month_size'] }}px" style="position:absolute;top:70%;left:50%; transform: translate(-50%,-50%);">{{ vars['data']['month'] }}</font>
+			<font face="Arial" size="{{ vars['year_size'] }}px" style="position:absolute;top:87%;left:50%; transform: translate(-50%,-50%);">{{ vars['data']['year'] }}</font>
+		</div>
+	</div>
+</body>
+</html>

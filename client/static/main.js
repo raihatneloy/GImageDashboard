@@ -30,6 +30,7 @@ $(function() {
 	  // you can refresh as many images you want just repeat above steps
 	}*/
     var dns = 'http://163.53.149.166:5001'
+    var dn2 = 'http://163.53.149.166:5000'
     $('#login-form-link').click(function(e) {
 		$("#login-form").delay(100).fadeIn(100);
  		$("#register-form").fadeOut(100);
@@ -245,6 +246,72 @@ HTML:
 
 		$('#code-preview').text(code);
 	});
+
+	var badge_no = "0";
+
+    $("#badge-1").click(function(){ badge_no = "1"; $("#badge-title").html($("#badge-1").html()); console.log(badge_no);});
+    $("#badge-2").click(function(){ badge_no = "2"; $("#badge-title").html($("#badge-2").html()); console.log(badge_no);});
+    $("#badge-3").click(function(){ badge_no = "3"; $("#badge-title").html($("#badge-3").html()); console.log(badge_no);});
+    $("#badge-4").click(function(){ badge_no = "4"; $("#badge-title").html($("#badge-4").html()); console.log(badge_no);});
+    $("#badge-5").click(function(){ badge_no = "5"; $("#badge-title").html($("#badge-5").html()); console.log(badge_no);});
+    $("#badge-6").click(function(){ badge_no = "6"; $("#badge-title").html($("#badge-6").html()); console.log(badge_no);});
+
+    $("#badge-submit").click(function(){
+        var badge_id = $("#badge-id").val();
+        var badge_name = $("#badge-name").val();
+        var badge_country = $("#badge-country").val();
+        var badge_catagory = $("#badge-catagory").val();
+        var badge_month = $("#badge-month").val();
+        var badge_year = $("#badge-year").val();
+
+        $.ajax({
+            url: Flask.url_for('badge_info'),
+            type: 'POST',
+            data: {
+                    "badge_id": badge_id,
+                    "name": badge_name,
+                    "title": badge_no,
+                    "country": badge_country,
+                    "catagory": badge_catagory,
+                    "month": badge_month,
+                    "year": badge_year
+                },
+            success: function(response){
+                $.ajax({
+	                url: 'http://163.53.149.166:5000/badge/' + badge_id,
+	                type: 'GET',
+	                success: function(response){
+	                	console.log(response);
+	                	info = response;
+	                	var size = 500;
+	                	var country_size = size/100; country_size = (size < 400 && info['country'].length > 8? country_size = country_size - 1: country_size);
+	                	var catagory_size = size/100; catagory_size = (size < 400 && info['catagory'].length > 8? catagory_size = catagory_size - 1: catagory_size);
+	                	var month_size = size/100; month_size = (size < 400 && info['month'].length > 8? month_size = month_size - 1: month_size);
+	                	var year_size = size/100; year_size = (size < 400 && info['year'].length > 8? year_size = year_size - 1: year_size);
+
+	                	$("#show-badge").empty();
+	                	$("#show-badge").attr('style', 'position:relative;width:' + size + 'px; height:' + size + 'px; background-image: url(' + info['img'] + ');' + 'background-size: 100% 100%');
+
+	                	var country_text = $('<p style="position:absolute;top:71%;left:50%; transform: translate(-50%,-50%);"><font face="Arial" size="' + country_size + 'px">' + info['country'] + '</font></p>');
+	                	var catagory_text = $('<p style="position:absolute;top:79%;left:50%; transform: translate(-50%,-50%);"><font face="Arial" size="' + catagory_size + 'px">' + info['catagory'] + '</font></p>');
+	                	var month_text = $('<p style="position:absolute;top:89%;left:50%; transform: translate(-50%,-50%);"><font face="Arial" size="' + month_size + 'px">' + info['month'] + '</font></p>');
+	                	var year_text = $('<p style="position:absolute;top:95%;left:50%; transform: translate(-50%,-50%);"><font face="Arial" size="' + year_size + 'px">' + info['year'] + '</font></p>');
+	                	$("#show-badge").append(country_text);
+	                	$("#show-badge").append(catagory_text);
+	                	$("#show-badge").append(month_text);
+	                	$("#show-badge").append(year_text);
+	                },
+	                error: function(err){
+	                	console.log(err);
+	                }
+	            });
+            },
+            error: function(response){
+                console.log(response);
+            }
+        });
+    });
+
 	$('#edit-form').click(function(){
 		$('#certificate-div').attr('style', 'display: none');
 		$('#edit-button').attr('style', 'display: none');

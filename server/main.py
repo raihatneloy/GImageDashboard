@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
+from flask_cors import CORS
 from modules import get_images_url as gsearch
 from modules.facebook import facebook
 from modules._500px import _500px
@@ -60,6 +61,7 @@ Badge = badge(db)
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
+CORS(app)
 
 # Initialize facebook class
 fb = None

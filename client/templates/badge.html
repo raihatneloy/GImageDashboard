@@ -1,0 +1,71 @@
+{% extends "layouts.html" %}
+
+{% block body %}
+
+<div id="badge-parent" class="container">
+    <div id="description-form" class="row" >
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form id="badge-form">
+                            <div class="form-group">
+                                Badge Id
+                                <input type="text" name="badge-id" id="badge-id" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                Name
+                                <input type="text" name="badge-name" id="badge-name" class="form-control">
+                            </div>
+                            <div class="form-group  btn-group">
+                                Certification Title<br/> 
+                                <button id="badge-title" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Select Title Type</button>
+                                <ul class="dropdown-menu" role="menu">
+                                <!-- <ul> -->
+                                    
+                                    <li><a id="badge-blank" href="#">Select Title Type</a></li>
+                                    <li><a id="badge-1" href="#">Top 1&permil;</a></li>
+                                    <li><a id="badge-2" href="#">Top 1%<a/></li>
+                                    <li><a id="badge-3" href="#">Top 2%</a></li>
+                                    <li><a id="badge-4" href="#">Top 5%</a></li>
+                                    <li><a id="badge-5" href="#">Top 10%</a></li>
+                                    <li><a id="badge-6" href="#">Top 20%</a></li>
+                                </ul>
+                            </div>
+                            <div class="form-group">
+                                Country
+                                <input type="text" name="badge-country" id="badge-country" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                Catagory<br/>
+                                <input type="text" name="badge-catagory" id="badge-catagory" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                Month
+                                <input type="text" name="badge-month" id="badge-month" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                Year
+                                <input type="text" name="badge-year" id="badge-year" class="form-control">
+                            </div>
+                            <div>
+                                <input type="button" name="badge-submit" id="badge-submit" tabindex="4" class="form-control btn btn-login" value="Submit" >
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="show-badge" style="width: 300px;height: 300px;">
+
+    </div>
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+    </script>
+</div>
+
+{% endblock %}

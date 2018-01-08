@@ -432,6 +432,48 @@ def certify():
     return render_template('certificate.html')
 
 
+@app.route('/badge', methods=['GET'])
+def badge():
+    if not check_auth():
+        return redirect(url_for('login', _external=True))
+    return render_template('badge.html')
+
+
+@app.route('/badge_info', methods=['POST'])
+def badge_info():
+    data = request.form.to_dict(flat=False)
+    print data
+    response = requests.post(
+            '%s/add_badge' % server_endpoint,
+            json=data
+        ).json()
+
+    return jsonify(response)
+
+@app.route('/getbadge', defaults={'id': None, 'size': 300})
+@app.route('/getbadge/<id>', defaults={'size': 300})
+@app.route('/getbadge/<id>/<int:size>')
+def getbadge(id, size):
+    if id is None:
+        return "<html>Error! No badge ID found</html>"
+
+    response = requests.get(
+            '%s/badge/%s' % (server_endpoint, id)
+        ).json()
+
+    variables = {}
+    variables['data'] = response
+    variables['id'] = id
+    variables['size'] = size
+
+    variables['country_size'] = size/100 - (0 if len(response['country']) < 9 else 1)
+    variables['catagory_size'] = size/100 -(0 if len(response['catagory']) < 9 else 1)
+    variables['month_size'] = size/100 - (0 if len(response['month']) < 9 else 1)
+    variables['year_size'] = size/100 - (0 if len(response['year']) < 9 else 1)
+
+    return render_template('badge_show.html', vars=variables)
+
+
 @app.route('/save_file', methods=['POST'])
 def save_file():
     upload_path = '%s/static/upload/%s.jpg' % (os.path.dirname(os.path.realpath(__file__)), request.form['name'])
