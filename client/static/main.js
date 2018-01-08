@@ -30,7 +30,6 @@ $(function() {
 	  // you can refresh as many images you want just repeat above steps
 	}*/
     var dns = 'http://163.53.149.166:5001'
-    var dn2 = 'http://163.53.149.166:5000'
     $('#login-form-link').click(function(e) {
 		$("#login-form").delay(100).fadeIn(100);
  		$("#register-form").fadeOut(100);
@@ -278,19 +277,19 @@ HTML:
                 },
             success: function(response){
                 $.ajax({
-	                url: 'http://163.53.149.166:5000/badge/' + badge_id,
+	                url: dns + '/badge/' + badge_id,
 	                type: 'GET',
 	                success: function(response){
 	                	console.log(response);
 	                	info = response;
-	                	var size = 500;
+	                	var size = 300;
 	                	var country_size = size/100; country_size = (size < 400 && info['country'].length > 8? country_size = country_size - 1: country_size);
 	                	var catagory_size = size/100; catagory_size = (size < 400 && info['catagory'].length > 8? catagory_size = catagory_size - 1: catagory_size);
 	                	var month_size = size/100; month_size = (size < 400 && info['month'].length > 8? month_size = month_size - 1: month_size);
 	                	var year_size = size/100; year_size = (size < 400 && info['year'].length > 8? year_size = year_size - 1: year_size);
 
 	                	$("#show-badge").empty();
-	                	$("#show-badge").attr('style', 'position:relative;width:' + size + 'px; height:' + size + 'px; background-image: url(' + info['img'] + ');' + 'background-size: 100% 100%');
+	                	$("#show-badge").attr('style', 'float: left; position:relative;width:' + size + 'px; height:' + size + 'px; background-image: url(' + info['img'] + ');' + 'background-size: 100% 100%');
 
 	                	var country_text = $('<p style="position:absolute;top:71%;left:50%; transform: translate(-50%,-50%);"><font face="Arial" size="' + country_size + 'px">' + info['country'] + '</font></p>');
 	                	var catagory_text = $('<p style="position:absolute;top:79%;left:50%; transform: translate(-50%,-50%);"><font face="Arial" size="' + catagory_size + 'px">' + info['catagory'] + '</font></p>');
@@ -300,6 +299,16 @@ HTML:
 	                	$("#show-badge").append(catagory_text);
 	                	$("#show-badge").append(month_text);
 	                	$("#show-badge").append(year_text);
+
+	                	$("#badge-code").text(
+`
+	<div>
+		<iframe src="` + dns + `/getbadge/` + badge_id + `/200" style="height: 350px; width: 350px" frameborder="0"></iframe>
+	</div>
+`	           
+	                	);
+
+	                	$("#badge-code").attr('style', 'style="float: right;"');
 	                },
 	                error: function(err){
 	                	console.log(err);
