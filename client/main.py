@@ -458,6 +458,16 @@ def badge_info():
 
     return jsonify(response)
 
+
+@app.route('/get_badge_info/<id>', methods=['GET'])
+def get_badge_info(id):
+    response = requests.get(
+            '%s/badge/%s' % (server_endpoint, id)
+        ).json()
+
+    return jsonify(response)
+
+
 @app.route('/getbadge', defaults={'id': None, 'size': 300})
 @app.route('/getbadge/<id>', defaults={'size': 300})
 @app.route('/getbadge/<id>/<int:size>')
